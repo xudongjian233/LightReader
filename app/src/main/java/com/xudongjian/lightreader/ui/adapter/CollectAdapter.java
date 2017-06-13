@@ -1,6 +1,8 @@
 package com.xudongjian.lightreader.ui.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,13 +34,18 @@ public class CollectAdapter extends RecyclerView.Adapter<CollectAdapter.Holder> 
     }
 
     @Override
-    public void onBindViewHolder(Holder holder, final int position) {
-        holder.tv_name.setText(mList.get(position).getName());
+    public void onBindViewHolder(final Holder holder, int position) {
+        if (position == getItemCount() - 1) {
+            holder.tv_name.setGravity(Gravity.CENTER);
+            holder.tv_name.setText("添加书籍");
+        } else {
+            holder.tv_name.setText(mList.get(position).getName());
+        }
         holder.vg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mOnItemClickListener != null) {
-                    mOnItemClickListener.onClick(position);
+                    mOnItemClickListener.onClick(holder.getAdapterPosition());
                 }
             }
         });
@@ -46,7 +53,11 @@ public class CollectAdapter extends RecyclerView.Adapter<CollectAdapter.Holder> 
 
     @Override
     public int getItemCount() {
-        return mList.size();
+        if (mList != null && mList.size() > 0) {
+            return mList.size() + 1;
+        } else {
+            return 1;
+        }
     }
 
     class Holder extends RecyclerView.ViewHolder {
@@ -56,8 +67,8 @@ public class CollectAdapter extends RecyclerView.Adapter<CollectAdapter.Holder> 
 
         Holder(View itemView) {
             super(itemView);
-            vg = (ViewGroup) itemView.findViewById(R.id.ll_collect);
-            tv_name = (TextView) itemView.findViewById(R.id.tv_name);
+            vg = itemView.findViewById(R.id.ll_collect);
+            tv_name = itemView.findViewById(R.id.tv_name);
         }
     }
 

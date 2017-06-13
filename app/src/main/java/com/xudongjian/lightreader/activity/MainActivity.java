@@ -12,9 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.xudongjian.lightreader.R;
@@ -36,8 +33,6 @@ import butterknife.ButterKnife;
  */
 public class MainActivity extends AppCompatActivity {
 
-    @Bind(R.id.b_scan_local)
-    Button mB_scanLocal;
 
     @Bind(R.id.rv_books)
     RecyclerView mRv_books;
@@ -60,76 +55,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(int position) {
 
-            mClickItemPosition = position;
-
-//            //如果安卓版本大于6.0
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                //如果没有悬浮窗权限
-//                if (!Settings.canDrawOverlays(MainActivity.this)) {
-//                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-//
-//                    builder.setTitle("没有悬浮窗的权限呢,快给人家权限");
-//                    builder.setPositiveButton("好哒", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-//                                    Uri.parse("package:" + getPackageName()));
-//                            startActivityForResult(intent, Codes.ACTIVITY_REQUEST_CODE_MAIN2OVERPLAYPERMISSION);
-//                        }
-//                    });
-//
-//                    builder.setNegativeButton("拒绝,下一个", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            Toast.makeText(MainActivity.this, "没有悬浮窗权限将无法看书哦", Toast.LENGTH_SHORT).show();
-//                        }
-//                    });
-//
-//                    builder.create().show();
-//                } else {//有悬浮窗权限
-//                    startFloatService(mCollectList.get(mClickItemPosition));
-//                }
-//            }
-
-            mFloatPermissionUtils = new FloatPermissionUtils();
-
-            int i;
-
-            if (mFloatPermissionUtils.checkPermission(MainActivity.this)) {
-                startFloatService(mCollectList.get(mClickItemPosition));
-            } else {
-                mFloatPermissionUtils.applyPermission(MainActivity.this);
-            }
-
-
-        }
-    };
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
-
-        new Paint().measureText("dasdadas");
-
-        mRv_books.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-
-        mRv_books.addItemDecoration(new RVItemDecoration());
-
-        mCollectList = SQLiteUtil.getInstance().query();
-
-        if (mCollectList != null && mCollectList.size() > 0) {
-            mCollectAdapter = new CollectAdapter(mCollectList);
-            mRv_books.setAdapter(mCollectAdapter);
-            mCollectAdapter.setOnItemClickListener(mOnItemClickListener);
-        }
-
-
-        mB_scanLocal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
+            //如果点击的是最后一个条目(即添加书籍)
+            if (position == mCollectAdapter.getItemCount() - 1) {
                 int permissionCheck = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE);
 
                 if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
@@ -152,8 +79,41 @@ public class MainActivity extends AppCompatActivity {
 
                     startActivityForResult(new Intent(MainActivity.this, ScanLocalActivity.class), 0);
                 }
+            } else {
+
+                mClickItemPosition = position;
+
+                mFloatPermissionUtils = new FloatPermissionUtils();
+
+
+                if (mFloatPermissionUtils.checkPermission(MainActivity.this)) {
+                    startFloatService(mCollectList.get(mClickItemPosition));
+                } else {
+                    mFloatPermissionUtils.applyPermission(MainActivity.this);
+                }
             }
-        });
+
+        }
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+
+        new Paint().measureText("dasdadas");
+
+        mRv_books.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+
+        mRv_books.addItemDecoration(new RVItemDecoration());
+
+        mCollectList = SQLiteUtil.getInstance().query();
+
+        mCollectAdapter = new CollectAdapter(mCollectList);
+        mRv_books.setAdapter(mCollectAdapter);
+        mCollectAdapter.setOnItemClickListener(mOnItemClickListener);
+
 
     }
 
