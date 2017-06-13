@@ -93,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
 
             mFloatPermissionUtils = new FloatPermissionUtils();
 
+            int i;
+
             if (mFloatPermissionUtils.checkPermission(MainActivity.this)) {
                 startFloatService(mCollectList.get(mClickItemPosition));
             } else {
