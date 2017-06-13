@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#eeeeee">
+
+    <LinearLayout
+        android:id="@+id/ll_book"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_bookName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"/>
+        <TextView
+            android:id="@+id/tv_bookSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:id="@+id/tv_bookPath"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:textSize="12sp"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_hasCollect"
+        android:visibility="invisible"
+        android:text="已添加"
+        android:background="#00ff00"
+        android:textSize="22sp"
+        android:layout_alignParentEnd="true"
+        android:layout_width="22sp" android:layout_height="wrap_content"/>
+
+</RelativeLayout>

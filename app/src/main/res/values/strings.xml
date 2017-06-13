@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">轻阅读</string>
+    <string name="start_skip">跳跃</string>
+    <string name="main_scanLocal">扫描本地书籍</string>
+</resources>

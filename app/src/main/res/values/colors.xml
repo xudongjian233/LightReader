@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <!--展示文字的悬浮窗口的背景颜色-->
+    <color name="textFloatWindowBackground">#99ffffff</color>
+
+    <!--天依蓝-->
+    <color name="TianYiLan">#66ccff</color>
+
+    <!--阿绫红-->
+    <color name="ALingHong">#ee0000</color>
+
+
+
+    <!--悬浮球-->
+    <color name="floatBall">#99cccccc</color>
+
+    <!--悬浮球背景-->
+    <color name="floatBallBack">#33aaaaaa</color>
+
+</resources>
