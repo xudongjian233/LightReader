@@ -87,7 +87,6 @@ public class ReaderTextView extends View {
 
         Log.e("encode", mCharset);
 
-        FileUtils.readLocalTxt(mBook.getPath(), mCharset);
 
         mPaint = new Paint();
 
