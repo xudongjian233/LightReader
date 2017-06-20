@@ -1,7 +1,6 @@
 package com.xudongjian.lightreader.ui.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +34,14 @@ public class CollectAdapter extends RecyclerView.Adapter<CollectAdapter.Holder> 
 
     @Override
     public void onBindViewHolder(final Holder holder, int position) {
+
+        //如果文字重心在中央
+        if (holder.tv_name.getGravity() == Gravity.CENTER) {
+            //将重心换到左边
+            holder.tv_name.setGravity(Gravity.START);
+        }
+
+        //如果是最后一个条目
         if (position == getItemCount() - 1) {
             holder.tv_name.setGravity(Gravity.CENTER);
             holder.tv_name.setText("添加书籍");
@@ -67,8 +74,8 @@ public class CollectAdapter extends RecyclerView.Adapter<CollectAdapter.Holder> 
 
         Holder(View itemView) {
             super(itemView);
-            vg = itemView.findViewById(R.id.ll_collect);
-            tv_name = itemView.findViewById(R.id.tv_name);
+            vg = (ViewGroup) itemView.findViewById(R.id.ll_collect);
+            tv_name = (TextView) itemView.findViewById(R.id.tv_name);
         }
     }
 

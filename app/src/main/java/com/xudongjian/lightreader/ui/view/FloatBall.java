@@ -13,11 +13,11 @@ import com.xudongjian.lightreader.R;
 
 /**
  * Created by xudongjian on 17/6/8.
+ * 控制程序的悬浮球
  */
 
 public class FloatBall extends View {
 
-    private final String TAG = "FloatBall";
 
     public FloatBall(Context context) {
         this(context, null);
@@ -60,26 +60,13 @@ public class FloatBall extends View {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
-//    @Override
-//    public boolean onTouchEvent(MotionEvent event) {
-//
-//        Log.e(TAG, "onTouchEvent");
-//
-//        //获取触摸动作
-//        int action = event.getAction();
-//        switch (action) {
-//            case MotionEvent.ACTION_DOWN://按下
-//                Log.e(TAG, "down");
-//                break;
-//            case MotionEvent.ACTION_MOVE://移动
-//                Log.e(TAG, "move");
-//                break;
-//            case MotionEvent.ACTION_UP://抬起
-//                Log.e(TAG, "up");
-//                break;
-//        }
-//
-//
-//        return super.onTouchEvent(event);
-//    }
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+
+
+        return super.onTouchEvent(event);
+    }
+
+
 }

@@ -16,7 +16,7 @@
 
 
     <!--悬浮球-->
-    <color name="floatBall">#99cccccc</color>
+    <color name="floatBall">#66ccff</color>
 
     <!--悬浮球背景-->
     <color name="floatBallBack">#33aaaaaa</color>

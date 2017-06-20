@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.View;
 
 import com.xudongjian.lightreader.bean.Book;
-import com.xudongjian.lightreader.utils.FileUtils;
 import com.xudongjian.lightreader.utils.SQLiteUtil;
 
 import org.mozilla.universalchardet.UniversalDetector;
@@ -57,6 +56,11 @@ public class ReaderTextView extends View {
 
     private String POS = "pos";
 
+    //是否是在调整悬浮窗大小
+    private boolean mIsAdjustingSize = false;
+
+    private int goBackEndPos;
+
 
     public ReaderTextView(Context context) {
         super(context);
@@ -99,6 +103,10 @@ public class ReaderTextView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
 
+        if (mIsAdjustingSize) {
+            return;
+        }
+
         //可绘制高度
         int height = getMeasuredHeight();
 
@@ -114,6 +122,8 @@ public class ReaderTextView extends View {
 
         //已经绘制了的行数
         int hasDrawLine = 0;
+
+        goBackEndPos = mBook.getEndPos();
 
         while (flag) {
             //读取的一段的字节数组
@@ -220,34 +230,47 @@ public class ReaderTextView extends View {
             }
             hasDrawLine++;
         }
-    }
-
-    private final String MEASURE = "Measure";
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-
-        //一般为match_content
-        if (widthMode == MeasureSpec.EXACTLY) {
-            Log.e(MEASURE, "widthMode:EXACTLY");
-        } else if (widthMode == MeasureSpec.AT_MOST) {
-            Log.e(MEASURE, "widthMode:AT_MOST");
-        }
-        Log.e(MEASURE, "widthSize:" + widthSize);
-
-        if (heightMode == MeasureSpec.EXACTLY) {
-            Log.e(MEASURE, "heightMode:EXACTLY");
-        } else if (heightMode == MeasureSpec.AT_MOST) {
-            Log.e(MEASURE, "heightMode:AT_MOST");
-        }
-        Log.e(MEASURE, "heightSize:" + heightSize);
+        //如果是在调整悬浮窗大小,则游标不增加到下一页的位置
+//        if (mIsAdjustingSize) {
+//            mBook.setEndPos(goBackEndPos);
+//        }
 
     }
+
+    public void setIsAdjustingSize(boolean is) {
+        mIsAdjustingSize = is;
+        if(!is){
+            mBook.setEndPos(goBackEndPos);
+            invalidate();
+        }
+    }
+
+//    private final String MEASURE = "Measure";
+//
+//    @Override
+//    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+//        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+//        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+//        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+//        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+//        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+//
+//        //一般为match_content
+//        if (widthMode == MeasureSpec.EXACTLY) {
+//            Log.e(MEASURE, "widthMode:EXACTLY");
+//        } else if (widthMode == MeasureSpec.AT_MOST) {
+//            Log.e(MEASURE, "widthMode:AT_MOST");
+//        }
+//        Log.e(MEASURE, "widthSize:" + widthSize);
+//
+//        if (heightMode == MeasureSpec.EXACTLY) {
+//            Log.e(MEASURE, "heightMode:EXACTLY");
+//        } else if (heightMode == MeasureSpec.AT_MOST) {
+//            Log.e(MEASURE, "heightMode:AT_MOST");
+//        }
+//        Log.e(MEASURE, "heightSize:" + heightSize);
+//
+//    }
 
     /**
      * 下一页

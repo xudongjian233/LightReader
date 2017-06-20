@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.xudongjian.lightreader">
+    package="com.xudongjian.lightreader">
 
-    <!--读写外部存储权限-->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <!--悬浮穿权限-->
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <!-- 读写外部存储权限 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- 悬浮穿权限 -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <!--震动权限-->
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:name=".application.App"
@@ -17,22 +20,29 @@
         android:theme="@style/AppTheme">
         <activity android:name=".activity.StartActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.MainActivity">
-        </activity>
-        <activity android:name=".activity.ScanLocalActivity">
-        </activity>
+        <activity android:name=".activity.MainActivity" />
+        <activity android:name=".activity.ScanLocalActivity" />
 
         <service
             android:name=".service.FloatService"
             android:enabled="true"
-            android:exported="true">
-        </service>
+            android:exported="true" />
 
+        <receiver
+            android:name=".BroadcastReceiver.ScanLocalReceiver">
+            <intent-filter android:priority="1000">
+                <action android:name="android.intent.action.MEDIA_MOUNTED"/>
+                <action android:name="android.intent.action.MEDIA_SCANNER_FINISHED"/>
+                <action android:name="android.intent.action.MEDIA_SCANNER_SCAN_FILE"/>
+                <action android:name="android.intent.action.MEDIA_SCANNER_STARTED"/>
+
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

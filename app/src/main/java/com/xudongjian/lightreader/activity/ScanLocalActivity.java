@@ -1,6 +1,10 @@
 package com.xudongjian.lightreader.activity;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +18,7 @@ import com.xudongjian.lightreader.utils.Codes;
 import com.xudongjian.lightreader.utils.SQLiteUtil;
 import com.xudongjian.lightreader.utils.ScanLocalUtil;
 
+import java.io.File;
 import java.util.List;
 
 import butterknife.Bind;
@@ -36,7 +41,22 @@ public class ScanLocalActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan_local);
+
         ButterKnife.bind(this);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//如果是4.4及以上版本
+            Intent mediaScanIntent = new Intent(
+                    Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            Uri contentUri = Uri.fromFile(new File("file://"
+                    + Environment.getExternalStorageDirectory())); //out is your output file
+            mediaScanIntent.setData(contentUri);
+            ScanLocalActivity.this.sendBroadcast(mediaScanIntent);
+        } else {
+            sendBroadcast(new Intent(
+                    Intent.ACTION_MEDIA_MOUNTED,
+                    Uri.parse("file://"
+                            + Environment.getExternalStorageDirectory())));
+        }
 
 
         LinearLayoutManager lm = new LinearLayoutManager(this);
