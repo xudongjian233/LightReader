@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import com.xudongjian.lightreader.R;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
@@ -16,7 +15,6 @@ import butterknife.ButterKnife;
  */
 public class StartActivity extends AppCompatActivity{
 
-    @Bind(R.id.tv_skip)
     TextView mTv_skip;
 
     private Runnable mRunnable;
@@ -28,6 +26,8 @@ public class StartActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
         ButterKnife.bind(this);
+
+        mTv_skip=findViewById(R.id.tv_skip);
 
         mRunnable=new Runnable() {
             @Override
@@ -61,6 +61,5 @@ public class StartActivity extends AppCompatActivity{
         super.onDestroy();
         mIsFinish=true;
         mTv_skip.removeCallbacks(mRunnable);
-        ButterKnife.unbind(this);
     }
 }

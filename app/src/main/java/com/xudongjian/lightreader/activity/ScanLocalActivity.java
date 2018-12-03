@@ -21,15 +21,12 @@ import com.xudongjian.lightreader.utils.ScanLocalUtil;
 import java.io.File;
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
 
 /**
  * 扫描本地书籍Activity
  */
 public class ScanLocalActivity extends AppCompatActivity {
 
-    @Bind(R.id.rv_scanLocal)
     RecyclerView mRv_scanLocal;
 
     private ScanLocalAdapter mScanLocalAdapter;
@@ -42,7 +39,7 @@ public class ScanLocalActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan_local);
 
-        ButterKnife.bind(this);
+        mRv_scanLocal=findViewById(R.id.rv_scanLocal);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//如果是4.4及以上版本
             Intent mediaScanIntent = new Intent(
@@ -99,6 +96,5 @@ public class ScanLocalActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ButterKnife.unbind(this);
     }
 }

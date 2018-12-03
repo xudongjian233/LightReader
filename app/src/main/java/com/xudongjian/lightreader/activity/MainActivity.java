@@ -25,8 +25,6 @@ import com.xudongjian.lightreader.utils.SQLiteUtil;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
 
 /**
  * 主Activity
@@ -34,7 +32,6 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity {
 
 
-    @Bind(R.id.rv_books)
     RecyclerView mRv_books;
 
     private CollectAdapter mCollectAdapter;
@@ -100,9 +97,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
 
         new Paint().measureText("dasdadas");
+
+        mRv_books=findViewById(R.id.rv_books);
 
         mRv_books.setLayoutManager(new LinearLayoutManager(MainActivity.this));
 
@@ -202,6 +200,5 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ButterKnife.unbind(this);
     }
 }
