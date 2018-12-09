@@ -164,9 +164,9 @@ public class FloatPermissionUtils {
      */
     private void commonROMPermissionApply(final Context context) {
         //这里也一样，魅族系统需要单独适配
-        if (RomUtils.checkIsMeizuRom()) {
-            meizuROMPermissionApply(context);
-        } else {
+//        if (RomUtils.checkIsMeizuRom()) {
+//            meizuROMPermissionApply(context);
+//        } else {
             if (Build.VERSION.SDK_INT >= 23) {
                 showConfirmDialog(context, new OnConfirmResult() {
                     @Override
@@ -190,7 +190,7 @@ public class FloatPermissionUtils {
                     }
                 });
             }
-        }
+//        }
     }
 
     private void showConfirmDialog(Context context, OnConfirmResult result) {

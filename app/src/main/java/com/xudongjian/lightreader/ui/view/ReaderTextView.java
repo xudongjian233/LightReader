@@ -60,6 +60,7 @@ public class ReaderTextView extends View {
     private boolean mIsAdjustingSize = false;
 
     private int goBackEndPos;
+    private String TAGA="goBack";
 
 
     public ReaderTextView(Context context) {
@@ -124,6 +125,7 @@ public class ReaderTextView extends View {
         int hasDrawLine = 0;
 
         goBackEndPos = mBook.getEndPos();
+        Log.e(TAGA,"goBackEndPos:"+goBackEndPos);
 
         while (flag) {
             //读取的一段的字节数组
@@ -224,7 +226,7 @@ public class ReaderTextView extends View {
 
                     //绘制一个字
                     canvas.drawText(oneChar, drawX, drawY, mPaint);
-                    Log.e(TAG, "oneChar  绘制的文字:" + oneChar + " |");
+//                    Log.e(TAG, "oneChar  绘制的文字:" + oneChar + " |");
 
                 }
             }
@@ -240,6 +242,8 @@ public class ReaderTextView extends View {
     public void setIsAdjustingSize(boolean is) {
         mIsAdjustingSize = is;
         if(!is){
+            Log.e(TAGA,"setIsAdjustingSize   goBackEndPos:"+goBackEndPos);
+            Log.e(TAGA,"setIsAdjustingSize   mBook.getEndPos:"+mBook.getEndPos());
             mBook.setEndPos(goBackEndPos);
             invalidate();
         }

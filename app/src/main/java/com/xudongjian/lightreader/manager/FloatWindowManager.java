@@ -1,5 +1,6 @@
 package com.xudongjian.lightreader.manager;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.os.Vibrator;
@@ -57,6 +58,7 @@ public class FloatWindowManager {
 
     //悬浮窗口添加到窗口管理器的布局参数
     private LayoutParams mLp_floatWindow;
+    private String EVENT="event";
 
 
     /**
@@ -77,6 +79,7 @@ public class FloatWindowManager {
      *
      * @param book 需要展示的文本对象
      */
+    @SuppressLint("ClickableViewAccessibility")
     public void showTextFloatWindow(Book book) {
 
 
@@ -174,6 +177,7 @@ public class FloatWindowManager {
     }
 
     //调整大小控件
+    @SuppressLint("ClickableViewAccessibility")
     private void addAdjustSizeView() {
         //调节悬浮窗大小控件
         AdjustSizeView adjustSizeView = new AdjustSizeView(mContext);
@@ -207,10 +211,10 @@ public class FloatWindowManager {
                         mWindowManager.updateViewLayout(mFloatWindow, mLp_floatWindow);
 
                         return true;
-                    case MotionEvent.ACTION_UP:
-                        mRtv_float.setIsAdjustingSize(false);
-                        return true;
-
+                        default:
+                            Log.e(EVENT,"default:"+event.getAction());
+                            mRtv_float.setIsAdjustingSize(false);
+                            break;
                 }
 
                 return true;
