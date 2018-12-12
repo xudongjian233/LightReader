@@ -57,7 +57,7 @@ public class ReaderTextView extends View {
     private String POS = "pos";
 
     //是否是在调整悬浮窗大小
-    private boolean mIsAdjustingSize = false;
+    public boolean mIsAdjustingSize = false;
 
     private int goBackEndPos;
     private String TAGA="goBack";
@@ -90,7 +90,7 @@ public class ReaderTextView extends View {
 
 //        EncodingDetect.readFile(mBook.getPath(),mCharset);
 
-        Log.e("encode", mCharset);
+        Log.e("encode", ""+mCharset);
 
 
         mPaint = new Paint();
@@ -103,6 +103,7 @@ public class ReaderTextView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        Log.e("event","onDraw");
 
         if (mIsAdjustingSize) {
             return;

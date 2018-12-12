@@ -3,6 +3,8 @@ package com.xudongjian.lightreader.manager;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.os.Build;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.Gravity;
@@ -58,7 +60,8 @@ public class FloatWindowManager {
 
     //悬浮窗口添加到窗口管理器的布局参数
     private LayoutParams mLp_floatWindow;
-    private String EVENT="event";
+    private String EVENT = "event";
+    private Handler mHandler = new Handler();
 
 
     /**
@@ -103,7 +106,11 @@ public class FloatWindowManager {
         mLp_floatWindow = new LayoutParams();
 
         //类型为悬浮窗
-        mLp_floatWindow.type = LayoutParams.TYPE_PHONE;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mLp_floatWindow.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        } else {
+            mLp_floatWindow.type = WindowManager.LayoutParams.TYPE_PHONE;
+        }
 
         /***///设置悬浮窗不可聚焦
         mLp_floatWindow.flags = LayoutParams.FLAG_NOT_FOCUSABLE;
@@ -194,6 +201,7 @@ public class FloatWindowManager {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                Log.e(EVENT, "onTouch:" + event.getAction());
 
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
@@ -211,10 +219,16 @@ public class FloatWindowManager {
                         mWindowManager.updateViewLayout(mFloatWindow, mLp_floatWindow);
 
                         return true;
-                        default:
-                            Log.e(EVENT,"default:"+event.getAction());
-                            mRtv_float.setIsAdjustingSize(false);
-                            break;
+                    default:
+                        Log.e(EVENT, "default:" + event.getAction());
+                        //不延时的话，拖动时快速松手会翻下一页
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mRtv_float.setIsAdjustingSize(false);
+                            }
+                        }, 1);
+                        break;
                 }
 
                 return true;
@@ -242,7 +256,11 @@ public class FloatWindowManager {
         final LayoutParams params = new LayoutParams();
 
         //设置类型为悬浮窗
-        params.type = LayoutParams.TYPE_PHONE;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            params.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        } else {
+            params.type = WindowManager.LayoutParams.TYPE_PHONE;
+        }
 
         //设置图片格式为可透明
         params.format = PixelFormat.RGBA_8888;
@@ -281,16 +299,23 @@ public class FloatWindowManager {
                         if (mIsLongClick) {
                             Log.e(toString(), "eventX:" + event.getX() + ";x:" + x);
                             Log.e(toString(), "eventY:" + event.getY() + ";y:" + y);
-                            params.x = (int) (ScreenUtils.getScreenWidth() - event.getRawX()) - x;
-                            params.y = (int) (ScreenUtils.getScreenHeight() - event.getRawY() - ScreenUtils.getStatusBarHeight()) - y;
+//                            params.x = (int) (ScreenUtils.getScreenWidth() - event.getRawX()) - x;
+//                            params.y = (int) (ScreenUtils.getScreenHeight() - event.getRawY() - ScreenUtils.getStatusBarHeight()) - y;
+
+                            params.x = (int) (ScreenUtils.getScreenWidth() - event.getRawX());
+                            params.y = (int) (ScreenUtils.getScreenHeight() - event.getRawY());
                             mWindowManager.updateViewLayout(button, params);
                         }
                         Log.e(toString(), "move");
                         break;
                     case MotionEvent.ACTION_UP://抬起
-                        mIsLongClick = false;
                         Log.e(toString(), "up");
-                        break;
+                        if (mIsLongClick) {
+                            mIsLongClick = false;
+                            return true;
+                        } else {
+                            return false;
+                        }
                 }
 
                 return false;
