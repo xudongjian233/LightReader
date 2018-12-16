@@ -19,6 +19,7 @@ import com.xudongjian.lightreader.bean.Book;
 import com.xudongjian.lightreader.ui.view.AdjustSizeView;
 import com.xudongjian.lightreader.ui.view.FloatBall;
 import com.xudongjian.lightreader.ui.view.ReaderTextView;
+import com.xudongjian.lightreader.utils.SPUtil;
 import com.xudongjian.lightreader.utils.ScreenUtils;
 
 /**
@@ -27,6 +28,8 @@ import com.xudongjian.lightreader.utils.ScreenUtils;
  */
 
 public class FloatWindowManager {
+
+    private String TAG = "FloatWindowManager";
 
     //上下文对象
     private Context mContext;
@@ -47,16 +50,16 @@ public class FloatWindowManager {
     private boolean mIsLongClick = false;
 
     //悬浮窗口的X坐标(左上角)
-    private float mFloatWindowX = 0;
+    private int mFloatWindowX = 0;
 
     //悬浮窗口的Y坐标(右上角)
-    private float mFloatWindowY = 0;
+    private int mFloatWindowY = 0;
 
     //悬浮窗宽
-    private int mFloatWindowWidth = 650;
+    private int mFloatWindowWidth;
 
     //悬浮窗高
-    private int mFloatWindowHeight = 650;
+    private int mFloatWindowHeight;
 
     //悬浮窗口添加到窗口管理器的布局参数
     private LayoutParams mLp_floatWindow;
@@ -74,6 +77,15 @@ public class FloatWindowManager {
 
         mWindowManager = (WindowManager) mContext.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
 
+        //获取历史宽度，默认为650
+        int sp_width = SPUtil.getIntNotClear(SPUtil.KEY_FLOAT_WINDOW_WIDTH);
+        mFloatWindowWidth = sp_width == 0 ? 650 : sp_width;
+        int sp_height = SPUtil.getIntNotClear(SPUtil.KEY_FLOAT_WINDOW_HEIGHT);
+        mFloatWindowHeight = sp_height == 0 ? 650 : sp_height;
+
+        //获取历史位置，默认是0
+        mFloatWindowX = SPUtil.getIntNotClear(SPUtil.KEY_FLOAT_WINDOW_X);
+        mFloatWindowY = SPUtil.getIntNotClear(SPUtil.KEY_FLOAT_WINDOW_Y);
     }
 
 
@@ -118,8 +130,8 @@ public class FloatWindowManager {
         //调整悬浮窗显示的停靠位置为左侧置顶
         mLp_floatWindow.gravity = Gravity.START | Gravity.TOP;
         // 以屏幕左上角为原点，设置x、y初始值，相对于gravity
-        mLp_floatWindow.x = 0;
-        mLp_floatWindow.y = 0;
+        mLp_floatWindow.x = mFloatWindowX;
+        mLp_floatWindow.y = mFloatWindowY;
 
         //设置图片格式,效果为背景透明
         mLp_floatWindow.format = PixelFormat.RGBA_8888;
@@ -170,6 +182,8 @@ public class FloatWindowManager {
                             mFloatWindowY = ScreenUtils.getScreenHeight() - ScreenUtils.getStatusBarHeight() - mFloatWindowHeight;
                         }
 
+                        SPUtil.putIntNotClear(SPUtil.KEY_FLOAT_WINDOW_X, mFloatWindowX);
+                        SPUtil.putIntNotClear(SPUtil.KEY_FLOAT_WINDOW_Y, mFloatWindowX);
 
                         Log.e(this.toString(), "x:" + mFloatWindowX + ";y:" + mFloatWindowY);
 
@@ -221,6 +235,8 @@ public class FloatWindowManager {
                         return true;
                     default:
                         Log.e(EVENT, "default:" + event.getAction());
+                        SPUtil.putIntNotClear(SPUtil.KEY_FLOAT_WINDOW_WIDTH, mLp_floatWindow.width);
+                        SPUtil.putIntNotClear(SPUtil.KEY_FLOAT_WINDOW_HEIGHT, mLp_floatWindow.height);
                         //不延时的话，拖动时快速松手会翻下一页
                         mHandler.postDelayed(new Runnable() {
                             @Override
@@ -238,15 +254,16 @@ public class FloatWindowManager {
     }
 
     //悬浮球
+    @SuppressLint("ClickableViewAccessibility")
     public void showNextButtonFloatWindow() {
-//        Button button = new Button(mContext);
+//        Button floatBall = new Button(mContext);
 
-        final FloatBall button = new FloatBall(mContext);
+        final FloatBall floatBall = new FloatBall(mContext);
 
-//        button.setText("下");
+//        floatBall.setText("下");
 
 
-        button.setOnClickListener(new View.OnClickListener() {
+        floatBall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mRtv_float.nextPage();
@@ -268,19 +285,23 @@ public class FloatWindowManager {
 
         params.flags = LayoutParams.FLAG_NOT_FOCUSABLE;
 
-        params.gravity = Gravity.BOTTOM | Gravity.END;
+        params.gravity = Gravity.START | Gravity.TOP;
 
 //        params.width = LayoutParams.WRAP_CONTENT;
 
-        params.width = 100;
-        params.height = 100;
-
+        params.width = 180;
+        params.height = 180;
+        int spx = SPUtil.getIntNotClear(SPUtil.KEY_BALL_X);
+        int spy = SPUtil.getIntNotClear(SPUtil.KEY_BALL_Y);
+        params.x = spx == 0 ? ScreenUtils.getScreenWidth() / 2 : spx;
+        params.y = spy == 0 ? ScreenUtils.getScreenHeight() / 2 : spy;
 
 //        params.height = LayoutParams.WRAP_CONTENT;
 
-        mWindowManager.addView(button, params);
+        mWindowManager.addView(floatBall, params);
 
-        button.setOnTouchListener(new View.OnTouchListener() {
+        floatBall.setOnTouchListener(new View.OnTouchListener() {
+            private int mStatusBarHeight;
             int x = 0, y = 0;
 
             @Override
@@ -294,17 +315,26 @@ public class FloatWindowManager {
                         Log.e(toString(), "down");
                         x = (int) event.getX();
                         y = (int) event.getY();
+                        Log.e(toString(), "ScreenUtils.getScreenWidth():" + ScreenUtils.getScreenWidth());
+                        Log.e(toString(), "ScreenUtils.getScreenHeight()" + ScreenUtils.getScreenHeight());
+                        mStatusBarHeight = ScreenUtils.getStatusBarHeight();
+                        floatBall.setDownXY(event.getX(), event.getY());
+                        floatBall.changeSmallBallToBig();
                         break;
                     case MotionEvent.ACTION_MOVE://移动
                         if (mIsLongClick) {
-                            Log.e(toString(), "eventX:" + event.getX() + ";x:" + x);
-                            Log.e(toString(), "eventY:" + event.getY() + ";y:" + y);
+                            Log.e(toString(), "event.getRawX():" + event.getRawX() + ";x:" + x);
+                            Log.e(toString(), "event.getRawY():" + event.getRawY() + ";y:" + y);
 //                            params.x = (int) (ScreenUtils.getScreenWidth() - event.getRawX()) - x;
 //                            params.y = (int) (ScreenUtils.getScreenHeight() - event.getRawY() - ScreenUtils.getStatusBarHeight()) - y;
 
-                            params.x = (int) (ScreenUtils.getScreenWidth() - event.getRawX());
-                            params.y = (int) (ScreenUtils.getScreenHeight() - event.getRawY());
-                            mWindowManager.updateViewLayout(button, params);
+                            params.x = (int) event.getRawX() - x;
+                            params.y = (int) event.getRawY() - mStatusBarHeight - y;
+                            mWindowManager.updateViewLayout(floatBall, params);
+                        } else {
+                            Log.e(TAG, "event.getX():" + event.getX());
+                            Log.e(TAG, "event.getY():" + event.getY());
+                            floatBall.setMoveXY(event.getX(), event.getY());
                         }
                         Log.e(toString(), "move");
                         break;
@@ -312,8 +342,13 @@ public class FloatWindowManager {
                         Log.e(toString(), "up");
                         if (mIsLongClick) {
                             mIsLongClick = false;
+                            SPUtil.putIntNotClear(SPUtil.KEY_BALL_X, params.x);
+                            SPUtil.putIntNotClear(SPUtil.KEY_BALL_Y, params.y);
                             return true;
                         } else {
+                            floatBall.setMoveing(false);
+                            floatBall.finishMove();
+                            floatBall.changeSmallBallToSmall();
                             return false;
                         }
                 }
@@ -322,9 +357,13 @@ public class FloatWindowManager {
             }
         });
 
-        button.setOnLongClickListener(new View.OnLongClickListener() {
+        floatBall.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                if (floatBall.isMoveing()) {
+                    return false;
+                }
+                floatBall.changeSmallBallToSmall();
                 Log.e(toString(), "onLongClick");
                 Vibrator vibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
 
