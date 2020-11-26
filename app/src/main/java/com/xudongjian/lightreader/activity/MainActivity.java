@@ -23,6 +23,7 @@ import com.xudongjian.lightreader.utils.Codes;
 import com.xudongjian.lightreader.utils.FloatPermissionUtils;
 import com.xudongjian.lightreader.utils.SQLiteUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -108,6 +109,9 @@ public class MainActivity extends AppCompatActivity {
 
         mCollectList = SQLiteUtil.getInstance().query();
 
+        mCollectList=new ArrayList<>();
+        mCollectList.add(new Book("斗罗大陆","/storage/emulated/0/1/斗罗大陆.txt",23333,0));
+        
         mCollectAdapter = new CollectAdapter(mCollectList);
         mRv_books.setAdapter(mCollectAdapter);
         mCollectAdapter.setOnItemClickListener(mOnItemClickListener);
